@@ -1,0 +1,19 @@
+[workspace]
+
+members = [
+    "second_max",
+    "unimodal_max",
+    "element_idx_check",
+    "inversions_count",
+    "sorted_n",
+    "quicksort",
+    "min_cut",
+    "topological_sort",
+    "strong_components",
+    "shortest_path",
+    "median_stream"
+]
+
+[profile.test]
+opt-level = 3
+overflow-checks = false
