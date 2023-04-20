@@ -6,19 +6,23 @@ type Edges = Vec<Vec<usize>>;
 pub struct Grpah {
     size: usize,
     edges_set: EdgesSet,
-    edges: Edges
+    edges: Edges,
 }
 
 #[derive(Clone, Copy, PartialEq)]
 enum Color {
     White,
     Gray,
-    Black
+    Black,
 }
 
 impl Grpah {
     pub fn new(size: usize, edges: &EdgesSet) -> Self {
-        Grpah { size, edges: Grpah::build_edges(size, edges), edges_set: edges.clone() }
+        Grpah {
+            size,
+            edges: Grpah::build_edges(size, edges),
+            edges_set: edges.clone(),
+        }
     }
 
     fn build_edges(size: usize, edges: &EdgesSet) -> Edges {
@@ -48,11 +52,11 @@ impl Grpah {
             let color = colors_vec[i];
             if color == Color::White {
                 if !self.dfs_sort(i, &mut colors_vec, &mut result) {
-                    return false
+                    return false;
                 }
                 result.push(i)
             } else if color == Color::Gray {
-                return false;   
+                return false;
             }
         }
 
@@ -67,7 +71,7 @@ impl Grpah {
         self.edges = Grpah::build_edges(self.size, &new_set);
         self.edges_set = new_set;
 
-        true 
+        true
     }
 
     fn dfs_sort(&self, edge_idx: usize, colors: &mut Vec<Color>, result: &mut Vec<usize>) -> bool {
@@ -80,17 +84,17 @@ impl Grpah {
             let color = colors[to];
             if color == Color::White {
                 if !self.dfs_sort(to, colors, result) {
-                    return false
+                    return false;
                 }
                 result.push(to);
             } else if color == Color::Gray {
-                return false;   
+                return false;
             }
         }
 
         colors[edge_idx] = Color::Black;
-        
-        return true
+
+        return true;
     }
 }
 
@@ -100,7 +104,7 @@ mod tests {
 
     #[test]
     fn should_show_edges() {
-        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2,1)]);
+        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2, 1)]);
         let g = Grpah::new(4, &e);
         let result = g.edges().clone();
         assert_eq!(result, e);
@@ -108,7 +112,7 @@ mod tests {
 
     #[test]
     fn should_sort_edges() {
-        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2,1)]);
+        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2, 1)]);
         let mut g = Grpah::new(4, &e);
         assert!(g.sort());
         let result = g.edges().clone();
@@ -117,7 +121,7 @@ mod tests {
 
     #[test]
     fn should_not_sort_cicle_graph() {
-        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2,1), (1,3)]);
+        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2, 1), (1, 3)]);
         let mut g = Grpah::new(4, &e);
         assert!(!g.sort());
         let result = g.edges().clone();
@@ -126,7 +130,7 @@ mod tests {
 
     #[test]
     fn should_sort_edges_twice() {
-        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2,1)]);
+        let e = HashSet::from([(0, 3), (3, 2), (3, 1), (2, 1)]);
         let mut g = Grpah::new(4, &e);
         assert!(g.sort());
         let result1 = g.edges().clone();

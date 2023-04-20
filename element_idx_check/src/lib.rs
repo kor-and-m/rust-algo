@@ -2,20 +2,20 @@ use std::cmp::Ordering;
 
 pub fn is_elem_idx_exists(n: &[i32], padding: i32) -> bool {
     let l = n.len();
-    
+
     match l {
         1 => return n[0] == padding,
-        _ => ()
+        _ => (),
     }
 
-    let h = l/2;
+    let h = l / 2;
     let current_padding = h as i32 + padding;
     println!("{} {}", &current_padding, &n[h]);
 
     match n[h].cmp(&current_padding) {
         Ordering::Less => is_elem_idx_exists(&n[h..], current_padding),
         Ordering::Greater => is_elem_idx_exists(&n[..h], padding),
-        Ordering::Equal => true
+        Ordering::Equal => true,
     }
 }
 
@@ -65,4 +65,3 @@ mod tests {
         assert!(result);
     }
 }
-

@@ -5,25 +5,24 @@ const BIGGEST_NUMBER: usize = 1_000_000; //usize::MAX;
 
 pub struct Graph {
     pub edges: Vec<Vec<(usize, usize)>>,
-    pub size: usize
+    pub size: usize,
 }
 
-
 #[derive(Debug)]
-pub struct Heap{
+pub struct Heap {
     data: Vec<(usize, usize)>,
     idx_map: Vec<usize>,
     size: usize,
-    capacity: usize
+    capacity: usize,
 }
 
 impl Heap {
     pub fn new(capacity: usize) -> Self {
-        Heap{
+        Heap {
             data: Vec::with_capacity(capacity),
             idx_map: vec![0; capacity],
             size: 0,
-            capacity
+            capacity,
         }
     }
 
@@ -39,7 +38,7 @@ impl Heap {
         self.size += 1;
 
         if self.size == 1 {
-            return 0
+            return 0;
         }
 
         self.idx_map[idx] = self.size - 1;
@@ -54,7 +53,12 @@ impl Heap {
         }
 
         let v = &mut self.data[data_idx].1;
-        let new_idx = if *v < new_val { idx } else { *v = new_val; self.up_fn(data_idx) };
+        let new_idx = if *v < new_val {
+            idx
+        } else {
+            *v = new_val;
+            self.up_fn(data_idx)
+        };
         new_idx
     }
 
@@ -81,8 +85,14 @@ impl Heap {
                 break;
             }
 
-            let min_children_id = if children.len() == 1 { children[0] } else {
-                if self.data[children[0]].1 < self.data[children[1]].1 { children[0] } else { children[1] }
+            let min_children_id = if children.len() == 1 {
+                children[0]
+            } else {
+                if self.data[children[0]].1 < self.data[children[1]].1 {
+                    children[0]
+                } else {
+                    children[1]
+                }
             };
 
             if self.data[min_children_id].1 >= self.data[new_elem_idx].1 {
@@ -139,7 +149,7 @@ impl Heap {
 pub fn build_graph_from_file(path: &str, size: usize) -> Graph {
     let file = File::open(path).unwrap();
     let reader = BufReader::new(file);
-    let mut v =  Vec::with_capacity(size);
+    let mut v = Vec::with_capacity(size);
 
     for _i in 0..size {
         v.push(Vec::new());
@@ -150,13 +160,22 @@ pub fn build_graph_from_file(path: &str, size: usize) -> Graph {
         let mut splitter = line.splitn(2, ' ');
         let idx: usize = splitter.next().unwrap().parse::<usize>().unwrap() - 1;
 
-        v[idx] = splitter.next().unwrap().split(" ").filter(|x| *x != "").map(|x| {
-            let v: Vec<&str> = x.split(",").collect();
-            (v[0].parse::<usize>().unwrap() - 1, v[1].parse::<usize>().unwrap())
-        }).collect();
+        v[idx] = splitter
+            .next()
+            .unwrap()
+            .split(" ")
+            .filter(|x| *x != "")
+            .map(|x| {
+                let v: Vec<&str> = x.split(",").collect();
+                (
+                    v[0].parse::<usize>().unwrap() - 1,
+                    v[1].parse::<usize>().unwrap(),
+                )
+            })
+            .collect();
     }
 
-    Graph{edges: v, size}
+    Graph { edges: v, size }
 }
 
 pub fn shortest_path(graph: Graph, src: usize) -> Vec<usize> {
@@ -207,11 +226,14 @@ mod tests {
         let g = build_graph_from_file("input.txt", 200);
         let result = shortest_path(g, 0);
         let mut coursera_result = [0; 10];
-        let output_idx = [7,37,59,82,99,115,133,165,188,197];
+        let output_idx = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197];
         for i in 0..output_idx.len() {
             coursera_result[i] = result[output_idx[i] - 1];
         }
-        assert_eq!(coursera_result, [2599,2610,2947,2052,2367,2399,2029,2442,2505,3068]);
+        assert_eq!(
+            coursera_result,
+            [2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068]
+        );
         // [2599, 2610, 2803, 2052, 2367, 2186, 2029, 2229, 2505, 3068]
     }
 }

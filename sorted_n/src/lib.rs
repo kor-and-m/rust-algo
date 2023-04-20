@@ -1,6 +1,6 @@
-use std::cmp::PartialOrd;
 use core::fmt::Debug;
-use std::cmp::Ordering::{Less, Greater, Equal};
+use std::cmp::Ordering::{Equal, Greater, Less};
+use std::cmp::PartialOrd;
 
 // fn insertion_sort<T: PartialOrd>(arr: &mut [T]) {
 //     for i in 0..arr.len() {
@@ -13,13 +13,15 @@ use std::cmp::Ordering::{Less, Greater, Equal};
 // }
 
 fn shafle_arr<T: Copy + Debug, Lt>(arr: &mut [T], lt: &Lt, pivot_idx: usize) -> usize
-    where Lt: Fn(&T, &T) -> bool {
+where
+    Lt: Fn(&T, &T) -> bool,
+{
     arr.swap(0, pivot_idx);
     let pivot = arr[0];
 
     let mut j = 1;
     for i in 1..arr.len() {
-        if lt(&arr[i], &pivot)  {
+        if lt(&arr[i], &pivot) {
             arr.swap(i, j);
             j += 1;
         }
@@ -30,9 +32,10 @@ fn shafle_arr<T: Copy + Debug, Lt>(arr: &mut [T], lt: &Lt, pivot_idx: usize) -> 
 }
 
 pub fn sort_n_by<T: Copy + Debug, Lt, F2>(arr: &mut [T], n: usize, lt: &Lt, choice_pivot: &F2) -> T
-    where Lt: Fn(&T, &T) -> bool,
-          F2: Fn(&mut [T]) -> usize {
-
+where
+    Lt: Fn(&T, &T) -> bool,
+    F2: Fn(&mut [T]) -> usize,
+{
     let len = arr.len();
     if len == 1 && n == 0 {
         return arr[0];
@@ -43,14 +46,21 @@ pub fn sort_n_by<T: Copy + Debug, Lt, F2>(arr: &mut [T], n: usize, lt: &Lt, choi
 
     match n.cmp(&(pivot_idx)) {
         Equal => arr[pivot_idx],
-        Greater => sort_n_by(&mut arr[pivot_idx+1..len], n - pivot_idx - 1, lt, choice_pivot),
-        Less => sort_n_by(&mut arr[0..pivot_idx], pivot_idx - n - 1, lt, choice_pivot)
+        Greater => sort_n_by(
+            &mut arr[pivot_idx + 1..len],
+            n - pivot_idx - 1,
+            lt,
+            choice_pivot,
+        ),
+        Less => sort_n_by(&mut arr[0..pivot_idx], pivot_idx - n - 1, lt, choice_pivot),
     }
 }
 
 pub fn sort_n<T, F2>(arr: &mut [T], n: usize, choice_pivot: &F2) -> T
-    where T: PartialOrd + Copy + Debug,
-    F2: Fn(&mut [T]) -> usize {
+where
+    T: PartialOrd + Copy + Debug,
+    F2: Fn(&mut [T]) -> usize,
+{
     sort_n_by(arr, n, &|a: &T, b: &T| a.lt(b), choice_pivot)
 }
 
@@ -70,19 +80,18 @@ pub fn first(_v: &mut [usize]) -> usize {
 
 //     if m > 0 {
 //         insertion_sort(&mut v[parts * group_size..parts * group_size + m - 1]);
-//         medians.push(v[parts * group_size + m / 2]);    
+//         medians.push(v[parts * group_size + m / 2]);
 //     }
-    
+
 //     let median_elem = medians.len() / 2;
 //     sort_n(&mut medians[..], median_elem, &first)
 // }
-
 
 #[cfg(test)]
 mod tests {
     // use crate::median_of_medians;
 
-    use super::{sort_n, first};
+    use super::{first, sort_n};
 
     #[test]
     fn it_works() {

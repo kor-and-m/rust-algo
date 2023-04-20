@@ -11,7 +11,13 @@ pub fn find_strong_components(size: usize, graph: Graph) -> Vec<usize> {
         for i in 0..size {
             let vertex = size - 1 - i;
             if !viseted_vec[vertex] {
-                dfs(&graph, &mut viseted_vec, &mut new_order, &mut current_idx, vertex)
+                dfs(
+                    &graph,
+                    &mut viseted_vec,
+                    &mut new_order,
+                    &mut current_idx,
+                    vertex,
+                )
             }
         }
 
@@ -29,7 +35,13 @@ pub fn find_strong_components(size: usize, graph: Graph) -> Vec<usize> {
 
         if class_labels[vertex] == 0 {
             let mut stack = Vec::with_capacity(size);
-            let weight = dfs_classes(vertex, current_class, &mut stack, &new_graph, &mut class_labels);
+            let weight = dfs_classes(
+                vertex,
+                current_class,
+                &mut stack,
+                &new_graph,
+                &mut class_labels,
+            );
             classes.push(weight);
             current_class += 1;
         }
@@ -50,8 +62,13 @@ pub fn find_strong_components(size: usize, graph: Graph) -> Vec<usize> {
     classes.into_iter().take(5).collect::<Vec<usize>>()
 }
 
-
-fn dfs_classes(vertex_idx_init: usize, current_class: usize, stack: &mut Vec<(usize, usize)>, graph: &Graph, class_labels: &mut Vec<usize>) -> usize {
+fn dfs_classes(
+    vertex_idx_init: usize,
+    current_class: usize,
+    stack: &mut Vec<(usize, usize)>,
+    graph: &Graph,
+    class_labels: &mut Vec<usize>,
+) -> usize {
     // let monitor = vertex_idx_init ==  600496;
     let mut vertex_idx = vertex_idx_init;
     let mut i = 0;
@@ -97,7 +114,7 @@ fn dfs_classes(vertex_idx_init: usize, current_class: usize, stack: &mut Vec<(us
 pub fn build_from_file(path: &str, size: usize) -> Graph {
     let file = File::open(path).unwrap();
     let reader = BufReader::new(file);
-    let mut v =  Vec::with_capacity(size);
+    let mut v = Vec::with_capacity(size);
 
     for _i in 0..size {
         v.push(Vec::new());
@@ -131,7 +148,13 @@ fn rebuild_graph_with_substitution(size: usize, graph: Graph, order: Vec<usize>)
     g
 }
 
-fn dfs(graph: &Graph, viseted_vec: &mut Vec<bool>, new_order: &mut Vec<usize>, current_idx: &mut usize, init_vertex: usize) {
+fn dfs(
+    graph: &Graph,
+    viseted_vec: &mut Vec<bool>,
+    new_order: &mut Vec<usize>,
+    current_idx: &mut usize,
+    init_vertex: usize,
+) {
     let mut stack = Vec::new();
     let mut vertex = init_vertex;
     let mut iteration = 0;
@@ -166,7 +189,10 @@ fn dfs(graph: &Graph, viseted_vec: &mut Vec<bool>, new_order: &mut Vec<usize>, c
 
 fn line_to_pair(line: &str) -> (usize, usize) {
     let pair: Vec<&str> = line.split(" ").collect();
-    (pair[0].parse::<usize>().unwrap() - 1, pair[1].parse::<usize>().unwrap() - 1)
+    (
+        pair[0].parse::<usize>().unwrap() - 1,
+        pair[1].parse::<usize>().unwrap() - 1,
+    )
 }
 
 #[cfg(test)]
@@ -186,6 +212,6 @@ mod tests {
     fn coursera_lesson_should_work() {
         let graph = build_from_file("lesson.txt", 9);
         let result = find_strong_components(9, graph);
-        assert_eq!(result, vec![3,3,3]);
+        assert_eq!(result, vec![3, 3, 3]);
     }
 }

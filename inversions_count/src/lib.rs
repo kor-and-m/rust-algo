@@ -35,7 +35,7 @@ fn inversions_count_and_sort(n: &Vec<usize>) -> (Vec<usize>, usize) {
         return (n.to_vec(), 0);
     }
 
-    let h = l/2;
+    let h = l / 2;
 
     let f = &n[h..].to_vec();
     let s = &n[..h].to_vec();
@@ -57,23 +57,26 @@ mod tests {
 
     #[test]
     fn inversions_count_test() {
-        let input = vec![1,3,5,2,4,6];
+        let input = vec![1, 3, 5, 2, 4, 6];
         let result = inversions_count(&input);
         assert_eq!(result, 3);
     }
 
     #[test]
     fn inversions_count_2_test() {
-        let input = vec![1,3,5,4,2,6];
+        let input = vec![1, 3, 5, 4, 2, 6];
         let result = inversions_count(&input);
         assert_eq!(result, 4);
     }
 
     #[test]
     fn inversions_count_in_file_test() {
-        let contents = fs::read_to_string("priv/data.txt")
-          .expect("Something went wrong reading the file");
-        let input: Vec<usize> = contents.split_whitespace().map(|x| x.parse::<i32>().unwrap() as usize).collect();
+        let contents =
+            fs::read_to_string("priv/data.txt").expect("Something went wrong reading the file");
+        let input: Vec<usize> = contents
+            .split_whitespace()
+            .map(|x| x.parse::<i32>().unwrap() as usize)
+            .collect();
         let result = inversions_count(&input);
         assert_eq!(result, 2407905288);
     }
