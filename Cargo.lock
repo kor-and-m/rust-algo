@@ -9,6 +9,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "clustering_algo"
+version = "0.1.0"
+dependencies = [
+ "union_find",
+]
+
+[[package]]
 name = "element_idx_check"
 version = "0.1.0"
 
@@ -22,6 +29,10 @@ dependencies = [
  "libc",
  "wasi",
 ]
+
+[[package]]
+name = "greedy"
+version = "0.1.0"
 
 [[package]]
 name = "inversions_count"
@@ -125,6 +136,10 @@ version = "0.1.0"
 
 [[package]]
 name = "unimodal_max"
+version = "0.1.0"
+
+[[package]]
+name = "union_find"
 version = "0.1.0"
 
 [[package]]
