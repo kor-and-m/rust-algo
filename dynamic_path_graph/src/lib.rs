@@ -25,13 +25,13 @@ mod tests {
     use super::*;
 
     use std::fs::File;
-    use std::io::{BufReader, Lines};
     use std::io::prelude::*;
+    use std::io::{BufReader, Lines};
 
     #[test]
     fn it_works() {
         let file =
-          File::open("priv/graph_path.txt").expect("Something went wrong reading the file");
+            File::open("priv/graph_path.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();
@@ -53,7 +53,11 @@ mod tests {
         assert_eq!(sum, 2955353732);
 
         let task_input = [1, 2, 3, 4, 17, 117, 517, 997];
-        let task_result: Vec<u8> = task_input.into_iter().map(|x| x - 1).map(|x| res.1.contains(&x) as u8).collect();
+        let task_result: Vec<u8> = task_input
+            .into_iter()
+            .map(|x| x - 1)
+            .map(|x| res.1.contains(&x) as u8)
+            .collect();
 
         assert_eq!(task_result, vec![1, 0, 1, 0, 0, 1, 1, 0]);
     }

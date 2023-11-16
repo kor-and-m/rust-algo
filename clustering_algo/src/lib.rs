@@ -1,16 +1,16 @@
 use std::fs::File;
 
-use std::io::{BufReader, Lines};
 use std::collections::HashMap;
+use std::io::{BufReader, Lines};
 use std::rc::Rc;
 
-use union_find::{UnionFind, Node};
+use union_find::{Node, UnionFind};
 
 #[derive(Debug)]
 struct Edge {
     src: usize,
     target: usize,
-    distance: usize
+    distance: usize,
 }
 
 pub fn run_clustering_algo_with_huge_input(lines: &mut Lines<BufReader<File>>) -> usize {
@@ -23,7 +23,10 @@ pub fn run_clustering_algo_with_huge_input(lines: &mut Lines<BufReader<File>>) -
     run_clustering_algo(&mut edges, nodes_count, |t, _e| (nodes_count - t, false))
 }
 
-pub fn run_clustering_algo_with_edge_input(lines: &mut Lines<BufReader<File>>, components: usize) -> usize {
+pub fn run_clustering_algo_with_edge_input(
+    lines: &mut Lines<BufReader<File>>,
+    components: usize,
+) -> usize {
     let raw_headers = lines.next().unwrap().unwrap();
 
     let nodes_count: usize = raw_headers.parse().unwrap();
@@ -33,9 +36,12 @@ pub fn run_clustering_algo_with_edge_input(lines: &mut Lines<BufReader<File>>, c
     })
 }
 
-fn run_clustering_algo<T, F>(edges: &mut Vec<Edge>, nodes_count: usize, f: F) -> T where F: Fn(usize, &Edge) -> (T, bool) {
+fn run_clustering_algo<T, F>(edges: &mut Vec<Edge>, nodes_count: usize, f: F) -> T
+where
+    F: Fn(usize, &Edge) -> (T, bool),
+{
     let mut node_map = build_node_map(edges, nodes_count);
-    
+
     let mut t = 0;
 
     let mut result: Option<T> = None;
@@ -50,18 +56,17 @@ fn run_clustering_algo<T, F>(edges: &mut Vec<Edge>, nodes_count: usize, f: F) ->
             t += 1;
 
             UnionFind::union(&src_node, &target_node);
-            
+
             let r = f(t, i);
             result = Some(r.0);
             if r.1 {
-                return result.unwrap()
+                return result.unwrap();
             }
         }
     }
 
     result.unwrap()
 }
-
 
 fn build_node_map(edges: &mut Vec<Edge>, nodes_count: usize) -> HashMap<usize, Node<usize>> {
     let mut node_map = HashMap::with_capacity(nodes_count);
@@ -85,7 +90,11 @@ fn init_edges(lines: &mut Lines<BufReader<File>>) -> Vec<Edge> {
             let target: usize = raw_data[1].parse().unwrap();
             let distance: usize = raw_data[2].parse().unwrap();
 
-            edges.push(Edge {src, target, distance})
+            edges.push(Edge {
+                src,
+                target,
+                distance,
+            })
         }
     }
 
@@ -103,7 +112,6 @@ fn init_huge_edges(lines: &mut Lines<BufReader<File>>) -> Vec<Edge> {
             let mut values = [0u8; 24];
             let mut cursor = 0;
             for i in line.split(" ") {
-
                 if let Ok(s) = i.parse::<u8>() {
                     values[cursor] = s;
                     cursor += 1;
@@ -121,13 +129,21 @@ fn init_huge_edges(lines: &mut Lines<BufReader<File>>) -> Vec<Edge> {
         let zero_distance_v = edges_map.get(v).unwrap();
         for i in zero_distance_v {
             if *i != id {
-                edges.push(Edge { src: id + 1, target: i + 1, distance: 0 })
+                edges.push(Edge {
+                    src: id + 1,
+                    target: i + 1,
+                    distance: 0,
+                })
             }
         }
         for i in produce_neighbours(v) {
             if let Some(neighbours) = edges_map.get(&i.0) {
                 for n in neighbours {
-                    edges.push(Edge { src: id + 1, target: n + 1, distance: i.1 })
+                    edges.push(Edge {
+                        src: id + 1,
+                        target: n + 1,
+                        distance: i.1,
+                    })
                 }
             }
         }
@@ -164,7 +180,7 @@ fn create_root(node_map: &mut HashMap<usize, Node<usize>>, id: usize) -> Node<us
 fn fetch_node_by_id(node_map: &mut HashMap<usize, Node<usize>>, id: usize) -> Node<usize> {
     match node_map.get(&id) {
         Some(v) => Rc::clone(v),
-        None => panic!("Error map initialization {}", id)
+        None => panic!("Error map initialization {}", id),
     }
 }
 
@@ -175,8 +191,7 @@ mod tests {
 
     #[test]
     fn sould_work_with_small_input() {
-        let file =
-          File::open("priv/input.txt").expect("Something went wrong reading the file");
+        let file = File::open("priv/input.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();
@@ -187,7 +202,7 @@ mod tests {
     #[test]
     fn sould_work_with_huge_input() {
         let file =
-          File::open("priv/huge_input.txt").expect("Something went wrong reading the file");
+            File::open("priv/huge_input.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();

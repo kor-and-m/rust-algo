@@ -1,4 +1,4 @@
-use std::{rc::Rc, cell::RefCell};
+use std::{cell::RefCell, rc::Rc};
 
 #[derive(Debug)]
 pub struct Tree {
@@ -7,7 +7,7 @@ pub struct Tree {
     pub frequency: f32,
     vertex_sum: f32,
     vertex_avg: f32,
-    pub val: usize
+    pub val: usize,
 }
 
 impl Tree {
@@ -18,11 +18,16 @@ impl Tree {
             frequency,
             val,
             vertex_sum: frequency,
-            vertex_avg: frequency
+            vertex_avg: frequency,
         }
     }
 
-    pub fn union_trees(root_val: usize, root_frequency: f32, first: Option<Rc<RefCell<Tree>>>, second: Option<Rc<RefCell<Tree>>>) -> Self {
+    pub fn union_trees(
+        root_val: usize,
+        root_frequency: f32,
+        first: Option<Rc<RefCell<Tree>>>,
+        second: Option<Rc<RefCell<Tree>>>,
+    ) -> Self {
         match (first, second) {
             (None, None) => unreachable!(),
             (Some(v1), Some(v2)) => {
@@ -35,7 +40,7 @@ impl Tree {
                     (true, true) => unreachable!(),
                     (false, false) => unreachable!(),
                     (false, true) => (v2_copy, v1_copy),
-                    (true, false) => (v1_copy, v2_copy)
+                    (true, false) => (v1_copy, v2_copy),
                 };
                 let vertex_sum = v1l.vertex_sum + v2l.vertex_sum + root_frequency;
                 let vertex_avg = vertex_sum + v1l.vertex_avg + v2l.vertex_avg;
@@ -46,15 +51,11 @@ impl Tree {
                     frequency: root_frequency,
                     val: root_val,
                     vertex_sum,
-                    vertex_avg
+                    vertex_avg,
                 }
-            },
+            }
             (v1, v2) => {
-                let v = if v1.is_none() {
-                    v2
-                } else {
-                    v1
-                }.unwrap();
+                let v = if v1.is_none() { v2 } else { v1 }.unwrap();
 
                 let (vertex_val, vertex_sum, vertex_avg) = {
                     let vl = v.borrow();
@@ -69,7 +70,7 @@ impl Tree {
                         frequency: root_frequency,
                         val: root_val,
                         vertex_sum,
-                        vertex_avg
+                        vertex_avg,
                     }
                 } else {
                     Tree {
@@ -78,7 +79,7 @@ impl Tree {
                         frequency: root_frequency,
                         val: root_val,
                         vertex_sum,
-                        vertex_avg
+                        vertex_avg,
                     }
                 }
             }
@@ -103,7 +104,7 @@ impl Tree {
             v.borrow().calculate_avg_step(step + 1)
         } else {
             0.0
-        }; 
+        };
         self.frequency * step as f32 + l + r
     }
 }
@@ -114,38 +115,46 @@ pub fn build_tree(frequencies: &[f32]) -> Rc<RefCell<Tree>> {
 
     for i in 0..l {
         forest[i][i] = Some(Rc::new(RefCell::new(Tree::new_leaf(i, frequencies[i]))))
-
     }
 
     for i in 1..l {
         let f = frequencies[i - 1];
         let s = frequencies[i];
         let tree = if f < s {
-            Tree::union_trees(i, s, Some(Rc::new(RefCell::new(Tree::new_leaf(i - 1, f)))), None)
+            Tree::union_trees(
+                i,
+                s,
+                Some(Rc::new(RefCell::new(Tree::new_leaf(i - 1, f)))),
+                None,
+            )
         } else {
-            Tree::union_trees(i - 1, f, Some(Rc::new(RefCell::new(Tree::new_leaf(i, s)))), None)
+            Tree::union_trees(
+                i - 1,
+                f,
+                Some(Rc::new(RefCell::new(Tree::new_leaf(i, s)))),
+                None,
+            )
         };
 
-        forest[i-1][i] = Some(Rc::new(RefCell::new(tree)));
+        forest[i - 1][i] = Some(Rc::new(RefCell::new(tree)));
     }
 
-
     for issue_size in 2..l {
-        for start_pointer in 0..l-issue_size {
+        for start_pointer in 0..l - issue_size {
             let mut m: Option<Tree> = None;
             let end_pointer = start_pointer + issue_size;
             for root_idx in (start_pointer + 1)..end_pointer {
-                let first_half = forest[start_pointer][root_idx-1].as_ref().unwrap();
-                let second_half = forest[root_idx+1][end_pointer].as_ref().unwrap();
+                let first_half = forest[start_pointer][root_idx - 1].as_ref().unwrap();
+                let second_half = forest[root_idx + 1][end_pointer].as_ref().unwrap();
                 let tree = Tree::union_trees(
                     root_idx,
                     frequencies[root_idx],
                     Some(Rc::clone(first_half)),
-                    Some(Rc::clone(second_half))
+                    Some(Rc::clone(second_half)),
                 );
                 m = match m {
                     Some(mv) if mv.vertex_avg < tree.vertex_avg => Some(mv),
-                    _ => Some(tree)
+                    _ => Some(tree),
                 };
             }
 
@@ -153,7 +162,7 @@ pub fn build_tree(frequencies: &[f32]) -> Rc<RefCell<Tree>> {
         }
     }
 
-    Rc::clone(forest[0][l-1].as_ref().unwrap())
+    Rc::clone(forest[0][l - 1].as_ref().unwrap())
 }
 
 #[cfg(test)]
@@ -175,4 +184,4 @@ mod tests {
         assert_eq!(result.borrow().vertex_avg, 2.23);
         assert_eq!(result.borrow().calculate_avg(), 2.23);
     }
-} 
+}

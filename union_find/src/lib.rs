@@ -1,4 +1,8 @@
-use std::{cmp::Ordering::{Equal, Greater, Less}, rc::Rc, cell::RefCell};
+use std::{
+    cell::RefCell,
+    cmp::Ordering::{Equal, Greater, Less},
+    rc::Rc,
+};
 
 pub type Node<T> = Rc<RefCell<UnionFind<T>>>;
 pub type UnionValLink<T> = Rc<RefCell<T>>;
@@ -7,12 +11,16 @@ pub type UnionValLink<T> = Rc<RefCell<T>>;
 pub struct UnionFind<T> {
     leader: Option<Node<T>>,
     rank: usize,
-    val: UnionValLink<T>
+    val: UnionValLink<T>,
 }
 
 impl<T: PartialEq> UnionFind<T> {
     pub fn create_root(val: T) -> Node<T> {
-        let union_struct = UnionFind {val: Rc::new(RefCell::new(val)), leader: None, rank: 0};
+        let union_struct = UnionFind {
+            val: Rc::new(RefCell::new(val)),
+            leader: None,
+            rank: 0,
+        };
         Rc::new(RefCell::new(union_struct))
     }
 
@@ -46,8 +54,8 @@ impl<T: PartialEq> UnionFind<T> {
             Equal => {
                 self_leader.borrow_mut().rank += 1;
                 other_leader.borrow_mut().leader = Some(self_leader);
-            },
-            Greater => other_leader.borrow_mut().leader = Some(self_leader)
+            }
+            Greater => other_leader.borrow_mut().leader = Some(self_leader),
         }
     }
 }
@@ -67,7 +75,7 @@ mod tests {
 
         assert_eq!(1, *UnionFind::find_val(&union1).borrow());
         assert_eq!(2, *UnionFind::find_val(&union2).borrow());
-        
+
         UnionFind::union(&union1, &union2);
         UnionFind::union(&union1, &union3);
 

@@ -5,7 +5,7 @@ use std::collections::LinkedList;
 pub struct Edge {
     pub from: usize,
     pub to: usize,
-    pub length: isize
+    pub length: isize,
 }
 
 impl Edge {
@@ -38,12 +38,16 @@ pub type Edges = Vec<Edge>;
 pub struct SimpleGraph {
     pub size: usize,
     pub is_directed: bool,
-    pub edges: Edges
+    pub edges: Edges,
 }
 
 impl SimpleGraph {
     pub fn new(size: usize, edges: Edges, is_directed: bool) -> Self {
-        SimpleGraph {size, edges, is_directed}
+        SimpleGraph {
+            size,
+            edges,
+            is_directed,
+        }
     }
 
     pub fn increase_size(&mut self, diff: usize) {
@@ -71,11 +75,10 @@ impl SimpleGraph {
     }
 }
 
-
 #[derive(Debug, Clone, Copy, Eq)]
 pub struct AdjacencyListEdge {
     pub length: isize,
-    pub from_or_to: usize
+    pub from_or_to: usize,
 }
 
 impl Ord for AdjacencyListEdge {
@@ -100,19 +103,24 @@ impl PartialEq for AdjacencyListEdge {
 pub struct AdjacencyListGraphIncome {
     pub size: usize,
     pub is_directed: bool,
-    pub edges: Vec<LinkedList<AdjacencyListEdge>>
+    pub edges: Vec<LinkedList<AdjacencyListEdge>>,
 }
 
 impl AdjacencyListGraphIncome {
     // O(m) where m is edges count
     pub fn from_simple(simple_graph: &SimpleGraph) -> Self {
-        let mut edges_list: Vec<LinkedList<AdjacencyListEdge>> = Vec::with_capacity(simple_graph.size);
+        let mut edges_list: Vec<LinkedList<AdjacencyListEdge>> =
+            Vec::with_capacity(simple_graph.size);
 
         for _i in 0..simple_graph.size {
             edges_list.push(LinkedList::new())
         }
 
-        let mut graph = AdjacencyListGraphIncome { size: simple_graph.size, is_directed: simple_graph.is_directed, edges: edges_list };
+        let mut graph = AdjacencyListGraphIncome {
+            size: simple_graph.size,
+            is_directed: simple_graph.is_directed,
+            edges: edges_list,
+        };
 
         for i in &simple_graph.edges {
             graph.add_edge(i)
@@ -127,7 +135,11 @@ impl AdjacencyListGraphIncome {
             let j_edges = &self.edges[i];
 
             for j in j_edges {
-                edges.push(Edge {to: i, from: j.from_or_to, length: j.length});
+                edges.push(Edge {
+                    to: i,
+                    from: j.from_or_to,
+                    length: j.length,
+                });
             }
         }
 
@@ -136,32 +148,45 @@ impl AdjacencyListGraphIncome {
 
     pub fn add_edge(&mut self, i: &Edge) {
         if !self.is_directed {
-            self.edges[i.from].push_back(AdjacencyListEdge { length: i.length, from_or_to: i.to });
-            self.edges[i.to].push_back(AdjacencyListEdge { length: i.length, from_or_to: i.from });
+            self.edges[i.from].push_back(AdjacencyListEdge {
+                length: i.length,
+                from_or_to: i.to,
+            });
+            self.edges[i.to].push_back(AdjacencyListEdge {
+                length: i.length,
+                from_or_to: i.from,
+            });
         } else {
-            self.edges[i.to].push_back(AdjacencyListEdge { length: i.length, from_or_to: i.from });
+            self.edges[i.to].push_back(AdjacencyListEdge {
+                length: i.length,
+                from_or_to: i.from,
+            });
         }
     }
 }
-
 
 #[derive(Debug)]
 pub struct AdjacencyListGraphOutcome {
     pub size: usize,
     pub is_directed: bool,
-    pub edges: Vec<LinkedList<AdjacencyListEdge>>
+    pub edges: Vec<LinkedList<AdjacencyListEdge>>,
 }
 
 impl AdjacencyListGraphOutcome {
     // O(m) where m is edges count
     pub fn from_simple(simple_graph: &SimpleGraph) -> Self {
-        let mut edges_list: Vec<LinkedList<AdjacencyListEdge>> = Vec::with_capacity(simple_graph.size);
+        let mut edges_list: Vec<LinkedList<AdjacencyListEdge>> =
+            Vec::with_capacity(simple_graph.size);
 
         for _i in 0..simple_graph.size {
             edges_list.push(LinkedList::new())
         }
 
-        let mut graph = AdjacencyListGraphOutcome { size: simple_graph.size, is_directed: simple_graph.is_directed, edges: edges_list };
+        let mut graph = AdjacencyListGraphOutcome {
+            size: simple_graph.size,
+            is_directed: simple_graph.is_directed,
+            edges: edges_list,
+        };
 
         for i in &simple_graph.edges {
             graph.add_edge(i)
@@ -176,7 +201,11 @@ impl AdjacencyListGraphOutcome {
             let j_edges = &self.edges[i];
 
             for j in j_edges {
-                edges.push(Edge {to: j.from_or_to, from: i, length: j.length});
+                edges.push(Edge {
+                    to: j.from_or_to,
+                    from: i,
+                    length: j.length,
+                });
             }
         }
 
@@ -185,10 +214,19 @@ impl AdjacencyListGraphOutcome {
 
     pub fn add_edge(&mut self, i: &Edge) {
         if !self.is_directed {
-            self.edges[i.from].push_back(AdjacencyListEdge { length: i.length, from_or_to: i.to });
-            self.edges[i.to].push_back(AdjacencyListEdge { length: i.length, from_or_to: i.from });
+            self.edges[i.from].push_back(AdjacencyListEdge {
+                length: i.length,
+                from_or_to: i.to,
+            });
+            self.edges[i.to].push_back(AdjacencyListEdge {
+                length: i.length,
+                from_or_to: i.from,
+            });
         } else {
-            self.edges[i.from].push_back(AdjacencyListEdge { length: i.length, from_or_to: i.to });
+            self.edges[i.from].push_back(AdjacencyListEdge {
+                length: i.length,
+                from_or_to: i.to,
+            });
         }
     }
 }

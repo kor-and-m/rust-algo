@@ -1,5 +1,5 @@
-use std::collections::{BinaryHeap, HashSet};
 use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashSet};
 
 use std::fs::File;
 
@@ -8,7 +8,7 @@ use std::io::{BufReader, Lines};
 #[derive(Eq)]
 struct Task {
     pub len: isize,
-    pub weight: isize
+    pub weight: isize,
 }
 
 #[derive(Eq)]
@@ -126,11 +126,11 @@ pub fn schedule_optiomal(lines: &mut Lines<BufReader<File>>) -> isize {
 #[derive(Eq, Clone, Copy, Debug)]
 struct PrimObject {
     src: usize,
-    min: isize
+    min: isize,
 }
 
 impl PrimObject {
-    pub fn new(src: usize , min: isize) -> Self {
+    pub fn new(src: usize, min: isize) -> Self {
         PrimObject { src, min }
     }
 }
@@ -181,7 +181,6 @@ fn build_graph(lines: &mut Lines<BufReader<File>>) -> Graph {
     vertexes
 }
 
-
 pub fn run_prim(lines: &mut Lines<BufReader<File>>) -> isize {
     let graph = build_graph(lines);
     let mut heap: BinaryHeap<PrimObject> = BinaryHeap::new();
@@ -197,7 +196,7 @@ pub fn run_prim(lines: &mut Lines<BufReader<File>>) -> isize {
                 let obj = PrimObject::new(j.0, j.1);
                 heap.push(obj);
             }
-        };
+        }
 
         let mut min_obj = heap.pop().unwrap();
 
@@ -220,8 +219,7 @@ mod tests {
 
     #[test]
     fn non_optimal_works() {
-        let file =
-          File::open("priv/data.txt").expect("Something went wrong reading the file");
+        let file = File::open("priv/data.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();
@@ -231,8 +229,7 @@ mod tests {
 
     #[test]
     fn optimal_works() {
-        let file =
-          File::open("priv/data.txt").expect("Something went wrong reading the file");
+        let file = File::open("priv/data.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();
@@ -242,8 +239,7 @@ mod tests {
 
     #[test]
     fn prim_works() {
-        let file =
-          File::open("priv/prim_data.txt").expect("Something went wrong reading the file");
+        let file = File::open("priv/prim_data.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();

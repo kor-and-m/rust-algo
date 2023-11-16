@@ -13,7 +13,11 @@ pub fn bellman_ford(graph: &AdjacencyListGraphIncome, source: usize) -> Option<V
             let prev_state = &bellman_ford_state[i % 2];
             let mut min_val = MAX;
             for e in graph.edges[s].iter() {
-                let c = if e.length > 0 {min_val - e.length < prev_state[e.from_or_to]} else {min_val < prev_state[e.from_or_to] + e.length};
+                let c = if e.length > 0 {
+                    min_val - e.length < prev_state[e.from_or_to]
+                } else {
+                    min_val < prev_state[e.from_or_to] + e.length
+                };
                 min_val = if c {
                     min_val
                 } else {
@@ -34,7 +38,7 @@ pub fn bellman_ford(graph: &AdjacencyListGraphIncome, source: usize) -> Option<V
         }
     }
 
-   None
+    None
 }
 
 #[cfg(test)]
@@ -50,12 +54,36 @@ mod tests {
     #[test]
     fn it_works() {
         let edges = vec![
-            Edge {from: 0, to: 1, length: 2},
-            Edge {from: 1, to: 2, length: 2},
-            Edge {from: 2, to: 3, length: 2},
-            Edge {from: 4, to: 3, length: 4},
-            Edge {from: 1, to: 4, length: 1},
-            Edge {from: 0, to: 4, length: 4}
+            Edge {
+                from: 0,
+                to: 1,
+                length: 2,
+            },
+            Edge {
+                from: 1,
+                to: 2,
+                length: 2,
+            },
+            Edge {
+                from: 2,
+                to: 3,
+                length: 2,
+            },
+            Edge {
+                from: 4,
+                to: 3,
+                length: 4,
+            },
+            Edge {
+                from: 1,
+                to: 4,
+                length: 1,
+            },
+            Edge {
+                from: 0,
+                to: 4,
+                length: 4,
+            },
         ];
 
         let simple_graph = SimpleGraph::new(5, edges, true);
@@ -68,19 +96,71 @@ mod tests {
     #[test]
     fn it_works_negative() {
         let edges = vec![
-            Edge {from: 0, to: 1, length: -2},
-            Edge {from: 1, to: 2, length: -1},
-            Edge {from: 2, to: 0, length: 4},
-            Edge {from: 2, to: 3, length: -3},
-            Edge {from: 4, to: 3, length: -4},
-            Edge {from: 4, to: 5, length: 1},
-            Edge {from: 2, to: 5, length: 2},
-            Edge {from: 6, to: 0, length: 0},
-            Edge {from: 6, to: 1, length: 0},
-            Edge {from: 6, to: 2, length: 0},
-            Edge {from: 6, to: 3, length: 0},
-            Edge {from: 6, to: 4, length: 0},
-            Edge {from: 6, to: 5, length: 0}
+            Edge {
+                from: 0,
+                to: 1,
+                length: -2,
+            },
+            Edge {
+                from: 1,
+                to: 2,
+                length: -1,
+            },
+            Edge {
+                from: 2,
+                to: 0,
+                length: 4,
+            },
+            Edge {
+                from: 2,
+                to: 3,
+                length: -3,
+            },
+            Edge {
+                from: 4,
+                to: 3,
+                length: -4,
+            },
+            Edge {
+                from: 4,
+                to: 5,
+                length: 1,
+            },
+            Edge {
+                from: 2,
+                to: 5,
+                length: 2,
+            },
+            Edge {
+                from: 6,
+                to: 0,
+                length: 0,
+            },
+            Edge {
+                from: 6,
+                to: 1,
+                length: 0,
+            },
+            Edge {
+                from: 6,
+                to: 2,
+                length: 0,
+            },
+            Edge {
+                from: 6,
+                to: 3,
+                length: 0,
+            },
+            Edge {
+                from: 6,
+                to: 4,
+                length: 0,
+            },
+            Edge {
+                from: 6,
+                to: 5,
+                length: 0,
+            },
         ];
 
         let simple_graph = SimpleGraph::new(7, edges, true);
@@ -93,26 +173,40 @@ mod tests {
     #[test]
     fn it_works_first() {
         let file =
-          File::open("priv/first_graph.txt").expect("Something went wrong reading the file");
+            File::open("priv/first_graph.txt").expect("Something went wrong reading the file");
 
         let reader = BufReader::new(file);
         let mut lines: Lines<BufReader<File>> = reader.lines();
 
-        let headers: Vec<usize> = lines.next().unwrap().unwrap().split(" ").map(|x| x.parse().unwrap()).collect();
+        let headers: Vec<usize> = lines
+            .next()
+            .unwrap()
+            .unwrap()
+            .split(" ")
+            .map(|x| x.parse().unwrap())
+            .collect();
         let mut edges = Vec::with_capacity(headers[1]);
 
         for i in lines {
             if let Ok(v) = i {
                 let value: Vec<isize> = v.split(" ").map(|x| x.parse().unwrap()).collect();
-                edges.push(Edge::new(value[0] as usize - 1, value[1] as usize - 1, value[2]))
+                edges.push(Edge::new(
+                    value[0] as usize - 1,
+                    value[1] as usize - 1,
+                    value[2],
+                ))
             }
         }
 
         let mut graph = SimpleGraph::new(headers[0], edges, true);
         graph.increase_size(1);
         for i in 0..graph.size {
-            graph.add_edge(Edge {from: headers[0], to: i, length: 0})
-        };
+            graph.add_edge(Edge {
+                from: headers[0],
+                to: i,
+                length: 0,
+            })
+        }
 
         let mut adjacency_graph = AdjacencyListGraphIncome::from_simple(&graph);
 

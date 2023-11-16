@@ -5,7 +5,11 @@ pub fn dijkstra(graph: &AdjacencyListGraphOutcome, source: usize) -> Vec<isize> 
     shortest_path(graph, source)
 }
 
-pub fn dijkstra_with_reweighting(graph: &AdjacencyListGraphOutcome, source: usize, reweight_vec: &Vec<isize>) -> Vec<isize> {
+pub fn dijkstra_with_reweighting(
+    graph: &AdjacencyListGraphOutcome,
+    source: usize,
+    reweight_vec: &Vec<isize>,
+) -> Vec<isize> {
     let mut vertex_heap: UpdateableHeap<(usize, usize, isize)> = UpdateableHeap::new(graph.size);
     vertex_heap.fill();
     vertex_heap.decrease_by_idx(source, 0, (source, source, 0));
@@ -35,17 +39,22 @@ pub fn dijkstra_with_reweighting(graph: &AdjacencyListGraphOutcome, source: usiz
         scores[active_vertex] = active_scores;
 
         if scores[active_vertex] != isize::MAX {
-            real_scores[active_vertex] = real_scores[from_vertex] + prev_len + reweight_edge(reweight_vec, from_vertex, active_vertex);
+            real_scores[active_vertex] = real_scores[from_vertex]
+                + prev_len
+                + reweight_edge(reweight_vec, from_vertex, active_vertex);
         }
         let edges = &graph.edges[active_vertex];
         for edge in edges.iter() {
-            vertex_heap.decrease_by_idx(edge.from_or_to, active_scores + edge.length, (active_vertex, edge.from_or_to, edge.length));
+            vertex_heap.decrease_by_idx(
+                edge.from_or_to,
+                active_scores + edge.length,
+                (active_vertex, edge.from_or_to, edge.length),
+            );
         }
     }
 
     real_scores
 }
-
 
 fn shortest_path(graph: &AdjacencyListGraphOutcome, src: usize) -> Vec<isize> {
     let mut vertex_heap: UpdateableHeap<usize> = UpdateableHeap::new(graph.size);
@@ -69,7 +78,11 @@ fn shortest_path(graph: &AdjacencyListGraphOutcome, src: usize) -> Vec<isize> {
         scores[active_vertex] = active_scores;
         let edges = &graph.edges[active_vertex];
         for edge in edges.iter() {
-            vertex_heap.decrease_by_idx(edge.from_or_to, active_scores + edge.length, active_vertex);
+            vertex_heap.decrease_by_idx(
+                edge.from_or_to,
+                active_scores + edge.length,
+                active_vertex,
+            );
         }
     }
 
@@ -82,7 +95,7 @@ fn reweight_edge(reweight_vec: &Vec<isize>, from: usize, to: usize) -> isize {
 
 #[cfg(test)]
 mod tests {
-    use graph_representations::{Edges, Edge, SimpleGraph};
+    use graph_representations::{Edge, Edges, SimpleGraph};
 
     use super::*;
 
@@ -92,7 +105,7 @@ mod tests {
             Edge::new(0, 1, 5),
             Edge::new(1, 2, 6),
             Edge::new(2, 3, 2),
-            Edge::new(0, 2, 15)
+            Edge::new(0, 2, 15),
         ];
         let graph = SimpleGraph::new(5, edges, false);
         let outcome = AdjacencyListGraphOutcome::from_simple(&graph);
@@ -103,13 +116,41 @@ mod tests {
     #[test]
     fn it_works2() {
         let edges: Edges = vec![
-            Edge { from: 0, to: 1, length: 0 },
-            Edge { from: 1, to: 2, length: 0 },
-            Edge { from: 2, to: 0, length: 1 },
-            Edge { from: 2, to: 3, length: 0 },
-            Edge { from: 4, to: 3, length: 2 },
-            Edge { from: 4, to: 5, length: 2 },
-            Edge { from: 2, to: 5, length: 0 }
+            Edge {
+                from: 0,
+                to: 1,
+                length: 0,
+            },
+            Edge {
+                from: 1,
+                to: 2,
+                length: 0,
+            },
+            Edge {
+                from: 2,
+                to: 0,
+                length: 1,
+            },
+            Edge {
+                from: 2,
+                to: 3,
+                length: 0,
+            },
+            Edge {
+                from: 4,
+                to: 3,
+                length: 2,
+            },
+            Edge {
+                from: 4,
+                to: 5,
+                length: 2,
+            },
+            Edge {
+                from: 2,
+                to: 5,
+                length: 0,
+            },
         ];
 
         let graph = SimpleGraph::new(6, edges, true);
@@ -121,13 +162,41 @@ mod tests {
     #[test]
     fn it_works3() {
         let edges: Edges = vec![
-            Edge { from: 0, to: 1, length: 0 },
-            Edge { from: 1, to: 2, length: 0 },
-            Edge { from: 2, to: 0, length: 1 },
-            Edge { from: 2, to: 3, length: 0 },
-            Edge { from: 4, to: 3, length: 2 },
-            Edge { from: 4, to: 5, length: 2 },
-            Edge { from: 2, to: 5, length: 0 }
+            Edge {
+                from: 0,
+                to: 1,
+                length: 0,
+            },
+            Edge {
+                from: 1,
+                to: 2,
+                length: 0,
+            },
+            Edge {
+                from: 2,
+                to: 0,
+                length: 1,
+            },
+            Edge {
+                from: 2,
+                to: 3,
+                length: 0,
+            },
+            Edge {
+                from: 4,
+                to: 3,
+                length: 2,
+            },
+            Edge {
+                from: 4,
+                to: 5,
+                length: 2,
+            },
+            Edge {
+                from: 2,
+                to: 5,
+                length: 0,
+            },
         ];
 
         let graph = SimpleGraph::new(6, edges, true);
@@ -139,13 +208,41 @@ mod tests {
     #[test]
     fn it_works4() {
         let edges: Edges = vec![
-            Edge { from: 0, to: 1, length: 0 },
-            Edge { from: 1, to: 2, length: 0 },
-            Edge { from: 2, to: 0, length: 1 },
-            Edge { from: 2, to: 3, length: 0 },
-            Edge { from: 4, to: 3, length: 2 },
-            Edge { from: 4, to: 5, length: 2 },
-            Edge { from: 2, to: 5, length: 0 }
+            Edge {
+                from: 0,
+                to: 1,
+                length: 0,
+            },
+            Edge {
+                from: 1,
+                to: 2,
+                length: 0,
+            },
+            Edge {
+                from: 2,
+                to: 0,
+                length: 1,
+            },
+            Edge {
+                from: 2,
+                to: 3,
+                length: 0,
+            },
+            Edge {
+                from: 4,
+                to: 3,
+                length: 2,
+            },
+            Edge {
+                from: 4,
+                to: 5,
+                length: 2,
+            },
+            Edge {
+                from: 2,
+                to: 5,
+                length: 0,
+            },
         ];
 
         let graph = SimpleGraph::new(6, edges, true);
@@ -158,13 +255,41 @@ mod tests {
     #[test]
     fn it_works5() {
         let edges: Edges = vec![
-            Edge { from: 0, to: 1, length: 0 },
-            Edge { from: 1, to: 2, length: 0 },
-            Edge { from: 2, to: 0, length: 1 },
-            Edge { from: 2, to: 3, length: 0 },
-            Edge { from: 4, to: 3, length: 2 },
-            Edge { from: 4, to: 5, length: 2 },
-            Edge { from: 2, to: 5, length: 0 }
+            Edge {
+                from: 0,
+                to: 1,
+                length: 0,
+            },
+            Edge {
+                from: 1,
+                to: 2,
+                length: 0,
+            },
+            Edge {
+                from: 2,
+                to: 0,
+                length: 1,
+            },
+            Edge {
+                from: 2,
+                to: 3,
+                length: 0,
+            },
+            Edge {
+                from: 4,
+                to: 3,
+                length: 2,
+            },
+            Edge {
+                from: 4,
+                to: 5,
+                length: 2,
+            },
+            Edge {
+                from: 2,
+                to: 5,
+                length: 0,
+            },
         ];
 
         let graph = SimpleGraph::new(6, edges, true);
@@ -174,4 +299,3 @@ mod tests {
         assert_eq!(result, vec![0, -2, -3, -6, isize::MAX, -1]);
     }
 }
-

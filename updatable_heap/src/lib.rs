@@ -4,12 +4,16 @@ const BIGGEST_NUMBER: isize = isize::MAX;
 pub struct UpdateableHeapElem<Payload: Default + Clone> {
     pub idx: usize,
     pub ordering_key: isize,
-    pub payload: Payload
+    pub payload: Payload,
 }
 
 impl<Payload: Default + Clone> UpdateableHeapElem<Payload> {
     pub fn new(idx: usize, ordering_key: isize, payload: Payload) -> Self {
-        Self { idx, ordering_key, payload }
+        Self {
+            idx,
+            ordering_key,
+            payload,
+        }
     }
 }
 
@@ -34,7 +38,11 @@ impl<Payload: Default + Clone> UpdateableHeap<Payload> {
     pub fn fill(&mut self) {
         let capacity = self.capacity;
         for i in 0..capacity {
-            self.insert(UpdateableHeapElem::new(i, BIGGEST_NUMBER, Payload::default()));
+            self.insert(UpdateableHeapElem::new(
+                i,
+                BIGGEST_NUMBER,
+                Payload::default(),
+            ));
         }
     }
 
