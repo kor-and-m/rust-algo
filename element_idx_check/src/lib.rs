@@ -10,7 +10,6 @@ pub fn is_elem_idx_exists(n: &[i32], padding: i32) -> bool {
 
     let h = l / 2;
     let current_padding = h as i32 + padding;
-    println!("{} {}", &current_padding, &n[h]);
 
     match n[h].cmp(&current_padding) {
         Ordering::Less => is_elem_idx_exists(&n[h..], current_padding),

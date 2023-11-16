@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate more_asserts;
 use core::hash::Hash;
 use std::{cmp::max, collections::HashMap};
 
@@ -64,7 +62,7 @@ mod tests {
         let input = vec![1, 6, 9, 3, 8, 3, 12, 2];
         let (res, time) = find_second_max_safe(input);
         assert_eq!(res, Some(9));
-        assert_le!(time, (8 + 3 - 2));
+        assert!(time <= (8 + 3 - 2));
     }
 
     #[test]
@@ -76,6 +74,6 @@ mod tests {
         ];
         let (res, time) = find_second_max_safe(input);
         assert_eq!(res, Some(12));
-        assert_le!(time, (64 + 6 - 2));
+        assert!(time <= (64 + 6 - 2));
     }
 }

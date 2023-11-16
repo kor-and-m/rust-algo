@@ -1,149 +1,11 @@
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 
-const BIGGEST_NUMBER: usize = 1_000_000; //usize::MAX;
+use updatable_heap::UpdateableHeap;
 
 pub struct Graph {
     pub edges: Vec<Vec<(usize, usize)>>,
     pub size: usize,
-}
-
-#[derive(Debug)]
-pub struct Heap {
-    data: Vec<(usize, usize)>,
-    idx_map: Vec<usize>,
-    size: usize,
-    capacity: usize,
-}
-
-impl Heap {
-    pub fn new(capacity: usize) -> Self {
-        Heap {
-            data: Vec::with_capacity(capacity),
-            idx_map: vec![0; capacity],
-            size: 0,
-            capacity,
-        }
-    }
-
-    pub fn fill(&mut self) {
-        let capacity = self.capacity;
-        for i in 0..capacity {
-            self.insert(i, BIGGEST_NUMBER);
-        }
-    }
-
-    pub fn insert(&mut self, idx: usize, val: usize) -> usize {
-        self.data.push((idx, val));
-        self.size += 1;
-
-        if self.size == 1 {
-            return 0;
-        }
-
-        self.idx_map[idx] = self.size - 1;
-
-        self.up_fn(self.size - 1)
-    }
-
-    pub fn decrease_by_idx(&mut self, idx: usize, new_val: usize) -> usize {
-        let data_idx = self.idx_map[idx];
-        if data_idx >= self.capacity {
-            return idx;
-        }
-
-        let v = &mut self.data[data_idx].1;
-        let new_idx = if *v < new_val {
-            idx
-        } else {
-            *v = new_val;
-            self.up_fn(data_idx)
-        };
-        new_idx
-    }
-
-    pub fn get_and_remove_min(&mut self) -> (usize, usize) {
-        self.data.swap(0, self.size - 1);
-        let result = self.data.pop().unwrap();
-        self.size -= 1;
-
-        if self.size > 0 {
-            self.idx_map[result.0] = self.capacity;
-            let new_head = self.data[0].0;
-            self.idx_map[new_head] = 0;
-            self.down_fn(0);
-        }
-
-        result
-    }
-
-    fn down_fn(&mut self, mut new_elem_idx: usize) -> usize {
-        loop {
-            let children = self.find_children(new_elem_idx);
-
-            if children.len() == 0 {
-                break;
-            }
-
-            let min_children_id = if children.len() == 1 {
-                children[0]
-            } else {
-                if self.data[children[0]].1 < self.data[children[1]].1 {
-                    children[0]
-                } else {
-                    children[1]
-                }
-            };
-
-            if self.data[min_children_id].1 >= self.data[new_elem_idx].1 {
-                break;
-            }
-
-            self.idx_map[self.data[min_children_id].0] = new_elem_idx;
-            self.idx_map[self.data[new_elem_idx].0] = min_children_id;
-
-            self.data.swap(new_elem_idx, min_children_id);
-
-            new_elem_idx = min_children_id;
-        }
-
-        new_elem_idx
-    }
-
-    fn up_fn(&mut self, mut new_elem_idx: usize) -> usize {
-        loop {
-            if new_elem_idx == 0 {
-                return 0;
-            }
-            let parent_idx = Self::find_parent(new_elem_idx);
-            if self.data[parent_idx].1 <= self.data[new_elem_idx].1 {
-                break;
-            }
-            self.idx_map[self.data[parent_idx].0] = new_elem_idx;
-            self.idx_map[self.data[new_elem_idx].0] = parent_idx;
-
-            self.data.swap(new_elem_idx, parent_idx);
-
-            new_elem_idx = parent_idx;
-        }
-
-        new_elem_idx
-    }
-
-    fn find_parent(idx: usize) -> usize {
-        (idx + 1) / 2 - 1
-    }
-
-    fn find_children(&self, idx: usize) -> Vec<usize> {
-        let mut result = Vec::with_capacity(2);
-        let first = (idx + 1) * 2 - 1;
-        for i in 0..2 {
-            if self.size > first + i {
-                result.push(first + i)
-            }
-        }
-        result
-    }
 }
 
 pub fn build_graph_from_file(path: &str, size: usize) -> Graph {
@@ -178,16 +40,18 @@ pub fn build_graph_from_file(path: &str, size: usize) -> Graph {
     Graph { edges: v, size }
 }
 
-pub fn shortest_path(graph: Graph, src: usize) -> Vec<usize> {
-    let mut vertex_heap = Heap::new(graph.size);
+pub fn shortest_path(graph: Graph, src: usize) -> Vec<isize> {
+    let mut vertex_heap: UpdateableHeap<()> = UpdateableHeap::new(graph.size);
     vertex_heap.fill();
-    vertex_heap.decrease_by_idx(src, 0);
+    vertex_heap.decrease_by_idx(src, 0, ());
     let mut v = vec![0; graph.size];
 
     let mut max_scores = 0;
 
-    for _i in 0..(graph.size - 1) {
-        let (active_vertex, active_scores) = vertex_heap.get_and_remove_min();
+    for _i in 0..graph.size {
+        let elem = vertex_heap.get_and_remove_min();
+        let active_vertex = elem.idx;
+        let active_scores = elem.ordering_key;
 
         if active_scores < max_scores {
             panic!("not correct algo {} {}", max_scores, active_scores);
@@ -199,13 +63,9 @@ pub fn shortest_path(graph: Graph, src: usize) -> Vec<usize> {
         let edges = &graph.edges[active_vertex];
         for i in 0..edges.len() {
             let edge = edges[i];
-            vertex_heap.decrease_by_idx(edge.0, active_scores + edge.1);
+            vertex_heap.decrease_by_idx(edge.0, active_scores + edge.1 as isize, ());
         }
     }
-
-    let (active_vertex, active_scores) = vertex_heap.get_and_remove_min();
-
-    v[active_vertex] = active_scores;
 
     v
 }
@@ -234,6 +94,5 @@ mod tests {
             coursera_result,
             [2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068]
         );
-        // [2599, 2610, 2803, 2052, 2367, 2186, 2029, 2229, 2505, 3068]
     }
 }

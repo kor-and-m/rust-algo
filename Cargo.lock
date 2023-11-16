@@ -3,6 +3,17 @@
 version = 3
 
 [[package]]
+name = "bellman_ford"
+version = "0.1.0"
+dependencies = [
+ "graph_representations",
+]
+
+[[package]]
+name = "binary_search_builder"
+version = "0.1.0"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -14,6 +25,18 @@ version = "0.1.0"
 dependencies = [
  "union_find",
 ]
+
+[[package]]
+name = "dijkstra"
+version = "0.1.0"
+dependencies = [
+ "graph_representations",
+ "updatable_heap",
+]
+
+[[package]]
+name = "dynamic_path_graph"
+version = "0.1.0"
 
 [[package]]
 name = "element_idx_check"
@@ -31,11 +54,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "graph_representations"
+version = "0.1.0"
+
+[[package]]
 name = "greedy"
 version = "0.1.0"
 
 [[package]]
+name = "huffman"
+version = "0.1.0"
+
+[[package]]
 name = "inversions_count"
+version = "0.1.0"
+
+[[package]]
+name = "jonsons"
+version = "0.1.0"
+dependencies = [
+ "bellman_ford",
+ "dijkstra",
+ "graph_representations",
+]
+
+[[package]]
+name = "knapsack"
 version = "0.1.0"
 
 [[package]]
@@ -57,9 +101,9 @@ dependencies = [
 
 [[package]]
 name = "more-asserts"
-version = "0.2.2"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7843ec2de400bcbc6a6328c958dc38e5359da6e93e72e37bc5246bf1ae776389"
+checksum = "1fafa6961cabd9c63bcd77a45d7e3b7f3b552b70417831fb0f56db717e72407e"
 
 [[package]]
 name = "ppv-lite86"
@@ -121,6 +165,9 @@ dependencies = [
 [[package]]
 name = "shortest_path"
 version = "0.1.0"
+dependencies = [
+ "updatable_heap",
+]
 
 [[package]]
 name = "sorted_n"
@@ -140,6 +187,10 @@ version = "0.1.0"
 
 [[package]]
 name = "union_find"
+version = "0.1.0"
+
+[[package]]
+name = "updatable_heap"
 version = "0.1.0"
 
 [[package]]

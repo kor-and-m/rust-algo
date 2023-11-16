@@ -15,10 +15,18 @@ members = [
     "median_stream",
     "greedy",
     "union_find",
-    "clustering_algo"
+    "clustering_algo",
+    "huffman",
+    "dynamic_path_graph",
+    "binary_search_builder",
+    "knapsack",
+    "jonsons",
+    "bellman_ford",
+    "graph_representations",
+    "dijkstra",
+    "updatable_heap"
 ]
 
 [profile.test]
-resolver = "2"
 opt-level = 3
 overflow-checks = false

@@ -75,9 +75,6 @@ fn dfs_classes(
     let mut sum = 0;
 
     'outer: loop {
-        if vertex_idx == 572230 {
-            println!("!!")
-        }
         class_labels[vertex_idx] = current_class;
 
         let r = graph[vertex_idx].clone();

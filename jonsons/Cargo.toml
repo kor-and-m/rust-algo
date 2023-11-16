@@ -1,0 +1,11 @@
+[package]
+name = "jonsons"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+graph_representations = { path = "../graph_representations" }
+bellman_ford = { path = "../bellman_ford" }
+dijkstra = { path = "../dijkstra" }
