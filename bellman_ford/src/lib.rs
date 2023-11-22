@@ -211,6 +211,6 @@ mod tests {
         let mut adjacency_graph = AdjacencyListGraphIncome::from_simple(&graph);
 
         let result = bellman_ford(&mut adjacency_graph, headers[0]);
-        assert_eq!(result, Some(vec![]));
+        assert_eq!(result, None);
     }
 }
